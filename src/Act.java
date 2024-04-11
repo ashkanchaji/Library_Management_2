@@ -189,7 +189,7 @@ public class Act {
 
         User user = Management.getUsers().get(info[0]);
 
-        user.getBorrowedResources().put(info[3], borrow);
+        user.getBorrowedResources().add(borrow);
 
         Resource resource = Management.getLibraries().get(info[2]).getResources().get(info[3]);
         if (resource instanceof Thesis){
@@ -201,22 +201,23 @@ public class Act {
         System.out.println("success");
     }
 
-    // not returning the latest resource
+    // not returning the latest resource?
     public static void returnResource(String[] info){
         // 0: userID, 1: userPass, 2: libraryID, 3: resourceID, 4: date, 5: time
 
         if (ResourceAction.notValidInfo(info[0], info[1], info[2], info[3])){return;}
 
-        if (!Management.getUsers().get(info[0]).getBorrowedResources().containsKey(info[3])){
+        Borrow borrow = Borrow.getBorrow(info[3], info[2], info[0]);
+
+        if (borrow == null){
             System.out.println("not-found");
             return;
         }
 
-        Borrow borrow = Management.getUsers().get(info[0]).getBorrowedResources().get(info[3]);
         long borrowDuration = Borrow.borrowDuration(borrow.getDate(), borrow.getTime(), info[4], info[5]);
         long penalty = Borrow.calculatePenalty(Management.getUsers().get(info[0]), borrow, borrowDuration);
 
-        Management.getUsers().get(info[0]).getBorrowedResources().remove(info[3], borrow);
+        Borrow.removeBorrow(info[3], info[2], info[0]);
 
         Resource resource = Management.getLibraries().get(info[2]).getResources().get(info[3]);
 
@@ -228,6 +229,10 @@ public class Act {
         }
 
         if (penalty != 0){
+            long oldPenalty = Management.getUsers().get(info[0]).getPenaltySum();
+            long newPenaltySum = oldPenalty + penalty;
+            Management.getUsers().get(info[0]).setPenaltySum(newPenaltySum);
+
             System.out.println(penalty);
             return;
         }

@@ -1,5 +1,7 @@
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Iterator;
 
 public class Borrow extends ResourceAction implements Duplicate{
     private final String date;
@@ -24,7 +26,7 @@ public class Borrow extends ResourceAction implements Duplicate{
 
     @Override
     public boolean isDuplicate(String resourceID, String userID){
-        if (Management.getUsers().get(userID).getBorrowedResources().containsKey(resourceID)){
+        if (containsResource(resourceID, userID)){
             System.out.println("not-allowed");
             return true;
         }
@@ -33,6 +35,18 @@ public class Borrow extends ResourceAction implements Duplicate{
 
     @Deprecated
     public boolean isDuplicate(String userID){return false;}
+
+    public boolean containsResource(String resource, String userID){
+        HashSet<Borrow> borrows = Management.getUsers().get(userID).getBorrowedResources();
+
+        for (Borrow borrow : borrows){
+            if (borrow.getResourceID().equals(resource) &&
+                borrow.getLibraryID().equals(this.getLibraryID())){
+                return true;
+            }
+        }
+        return false;
+    }
 
     @Override
     public boolean limitationApplied(String[] info) {
@@ -63,6 +77,31 @@ public class Borrow extends ResourceAction implements Duplicate{
         }
 
         return false;
+    }
+
+
+    public static Borrow getBorrow (String resourceID, String libraryID, String userID){
+        HashSet<Borrow> borrows = Management.getUsers().get(userID).getBorrowedResources();
+
+        for (Borrow borrow : borrows){
+            if (borrow.getResourceID().equals(resourceID) && borrow.getLibraryID().equals(libraryID)){
+                return borrow;
+            }
+        }
+        return null;
+    }
+
+    public static void removeBorrow (String resourceID, String libraryID, String userID){
+        Iterator<Borrow> iterator = Management.getUsers().get(userID).getBorrowedResources().iterator();
+
+        while (iterator.hasNext()){
+            Borrow borrow = iterator.next();
+            if (borrow.getResourceID().equals(resourceID) &&
+                borrow.getLibraryID().equals(libraryID)){
+                iterator.remove();
+                return;
+            }
+        }
     }
 
     private int userMaxBorrowTime (String userID, String libraryID, String resourceID){

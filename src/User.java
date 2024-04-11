@@ -1,4 +1,5 @@
 import java.util.HashMap;
+import java.util.HashSet;
 
 public class User implements Duplicate, Restrictions {
     private final String id;
@@ -8,10 +9,10 @@ public class User implements Duplicate, Restrictions {
     private final String nationalId;
     private final String birthYear;
     private final String address;
-    private int penaltySum;
+    private long penaltySum;
     private final int penaltyPerHour;
     private final int maxBorrowCount;
-    private HashMap<String, Borrow> borrowedResources;
+    private HashSet<Borrow> borrowedResources;
 
     public User(String id, String password, String firstName, String lastName,
                 String nationalId, String birthYear, String address, int penaltyPerHour, int maxInUse) {
@@ -25,7 +26,7 @@ public class User implements Duplicate, Restrictions {
         this.penaltyPerHour = penaltyPerHour;
         maxBorrowCount = maxInUse;
         penaltySum = 0;
-        borrowedResources = new HashMap<>();
+        borrowedResources = new HashSet<>();
     }
 
     /**
@@ -129,11 +130,11 @@ public class User implements Duplicate, Restrictions {
         return address;
     }
 
-    public int getPenaltySum() {
+    public long getPenaltySum() {
         return penaltySum;
     }
 
-    public void setPenaltySum(int penaltySum) {
+    public void setPenaltySum(long penaltySum) {
         this.penaltySum = penaltySum;
     }
 
@@ -145,11 +146,11 @@ public class User implements Duplicate, Restrictions {
         return maxBorrowCount;
     }
 
-    public HashMap<String, Borrow> getBorrowedResources() {
+    public HashSet<Borrow> getBorrowedResources() {
         return borrowedResources;
     }
 
-    public void setBorrowedResources(HashMap<String, Borrow> borrowedResources) {
+    public void setBorrowedResources(HashSet<Borrow> borrowedResources) {
         this.borrowedResources = borrowedResources;
     }
 }
