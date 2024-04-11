@@ -86,6 +86,7 @@ public class Management {
                 Act.read(info);
                 break;
             case "add-comment":
+                Act.comment(info);
                 break;
             case "search":
                 break;

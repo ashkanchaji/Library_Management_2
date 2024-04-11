@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 public class Resource implements Duplicate, Restrictions{
     private final String id;
     private final String name;
@@ -5,6 +7,7 @@ public class Resource implements Duplicate, Restrictions{
     private final String printYear;
     private final String categoryID;
     private final String libraryID;
+    private final ArrayList<Comment> comments;
 
     public Resource(String id, String name, String author, String printYear,
                     String categoryID, String libraryID) {
@@ -14,6 +17,7 @@ public class Resource implements Duplicate, Restrictions{
         this.printYear = printYear;
         this.categoryID = categoryID;
         this.libraryID = libraryID;
+        comments = new ArrayList<>();
     }
 
     /**
@@ -106,7 +110,7 @@ public class Resource implements Duplicate, Restrictions{
      * @return boolean -> true if one is not valid, else false.
      */
 
-    private boolean notValidIDs (String libraryID, String categoryID){
+    public static boolean notValidIDs (String libraryID, String categoryID){
         if (!Management.getLibraries().containsKey(libraryID) || !Management.getCategories().containsKey(categoryID)){
             System.out.println("not-found");
             return true;
@@ -184,5 +188,9 @@ public class Resource implements Duplicate, Restrictions{
 
     public String getLibraryID() {
         return libraryID;
+    }
+
+    public ArrayList<Comment> getComments() {
+        return comments;
     }
 }

@@ -269,4 +269,16 @@ public class Act {
 
         System.out.println("success");
     }
+
+    public static void comment (String[] info){
+        // 0: userID, 1: userPass, 2: libraryId, 3: resourceID, 4: comment
+
+        Comment comment = new Comment(info[0], info[4]);
+
+        if (comment.cannotAdd(info)){return;}
+
+        Management.getLibraries().get(info[2]).getResources().get(info[3]).getComments().add(comment);
+
+        System.out.println("success");
+    }
 }
