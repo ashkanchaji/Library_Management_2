@@ -13,6 +13,13 @@ public class Ganjineh extends Book{
         borrowedToReadTime = "00:00";
     }
 
+    @Override
+    public String[] namesToSearchIN() {
+        String[] names = super.namesToSearchIN();
+        names[2] = this.donor;
+        return new String[]{names[0], names[1], names[2], this.getPublisher()};
+    }
+
     public String getDonor() {
         return donor;
     }

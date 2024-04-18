@@ -102,6 +102,18 @@ public class User implements Duplicate, Restrictions {
         return false;
     }
 
+    public boolean notStaff(User user, String userPass){
+        if (!(user instanceof Staff) && !(user instanceof Professor)){
+            System.out.println("permission-denied");
+            return true;
+        }
+        if (!user.getPassword().equals(userPass)){
+            System.out.println("invalid-pass");
+            return true;
+        }
+        return false;
+    }
+
     public String getId() {
         return id;
     }

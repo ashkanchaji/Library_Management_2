@@ -89,10 +89,13 @@ public class Management {
                 Act.comment(info);
                 break;
             case "search":
+                Act.search(info);
                 break;
             case "search-user":
+                Act.searchUser(info);
                 break;
             case "category-report":
+                Act.categoryReport(info);
                 break;
             case "library-report":
                 break;

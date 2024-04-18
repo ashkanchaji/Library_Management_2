@@ -9,6 +9,13 @@ public class Thesis extends Resource{
         isBorrowed = false;
     }
 
+    @Override
+    public String[] namesToSearchIN(){
+        String[] names = super.namesToSearchIN();
+        names[2] = this.professor;
+        return names;
+    }
+
     public String getProfessor() {
         return professor;
     }

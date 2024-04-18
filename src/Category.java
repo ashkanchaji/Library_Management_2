@@ -49,6 +49,19 @@ public class Category {
         System.out.println("success");
     }
 
+    public static boolean lookUpCategories(Category subCategory, String categoryID){
+        if (subCategory.getId().equals(categoryID)){return true;}
+
+        Category category = subCategory;
+
+        while (!category.getId().equals("null")){
+            category = category.getSuperCategory();
+            if (category.getId().equals(categoryID)){return true;}
+        }
+
+        return false;
+    }
+
     public String getId() {
         return id;
     }

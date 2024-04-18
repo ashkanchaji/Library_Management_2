@@ -85,7 +85,7 @@ public class Resource implements Duplicate, Restrictions{
      * @return boolean -> true if one of the cases above happens, else false.
      */
 
-    private static boolean checkNotManager (String ID, String pass){
+    public static boolean checkNotManager (String ID, String pass){
         if (!Management.getUsers().containsKey(ID)){
             System.out.println("not-found");
             return true;
@@ -138,7 +138,7 @@ public class Resource implements Duplicate, Restrictions{
      * @return boolean -> true if manager does not have access, else false
      */
 
-    private static boolean notManagerLibrary(String managerID, String libraryID){
+    public static boolean notManagerLibrary(String managerID, String libraryID){
         if (!((Manager)Management.getUsers().get(managerID)).getLibraryID().equals(libraryID)){
             System.out.println("permission-denied");
             return true;
@@ -164,6 +164,10 @@ public class Resource implements Duplicate, Restrictions{
                 notValidIDs(info[3], info[4]) ||
                 isDuplicate(info[2], info[3]) ||
                 notManagerLibrary(info[0], info[3]);
+    }
+
+    public String[] namesToSearchIN(){
+        return new String[]{this.name, this.author, ""};
     }
 
     public String getId() {

@@ -1,3 +1,7 @@
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+
 public class Act {
     /**
      * Gets the info about the student and if the ID is a duplicate it prints "duplicate-id",
@@ -281,4 +285,108 @@ public class Act {
 
         System.out.println("success");
     }
+
+    public static void search(String[] info){
+        // 0: keyword to search
+
+        String keyWord = info[0].toLowerCase();
+
+        ArrayList<String> foundSources = new ArrayList<>();
+
+        Management.getLibraries().forEach((libraryID, library) ->{
+            HashMap<String, Resource> resources = library.getResources();
+
+            resources.forEach((resourceID, resource) -> {
+                for (String name : resource.namesToSearchIN()){
+                    if (name.toLowerCase().contains(keyWord)){
+                        foundSources.add(resource.getId());
+                    }
+                }
+            });
+        });
+
+        printIDs(foundSources);
+    }
+
+    public static void searchUser(String[] info){
+        // 0: userID, 1: userPass, 2: keyword
+
+        User staff = Management.getUsers().get(info[0]);
+
+        if (staff == null){
+            System.out.println("not-found");
+            return;
+        }
+
+        if (staff.notStaff(staff, info[1])){return;}
+
+        String keyword = info[2].toLowerCase();
+
+        ArrayList<String> foundIDs = new ArrayList<>();
+
+        Management.getUsers().forEach((userID, user) -> {
+            if (user.getFirstName().toLowerCase().contains(keyword) ||
+                user.getLastName().toLowerCase().contains(keyword)){
+                foundIDs.add(userID);
+            }
+        });
+
+        printIDs(foundIDs);
+    }
+
+    private static void printIDs(ArrayList<String> IDs){
+        if (IDs.isEmpty()){
+            System.out.println("not-found");
+            return;
+        }
+
+        Collections.sort(IDs);
+
+        for (int i = 0; i < IDs.size(); i++) {
+            if (i == 0) {
+                System.out.print(IDs.get(i));
+            } else {
+                System.out.print("|" + IDs.get(i));
+            }
+        }
+
+        System.out.println();
+    }
+
+    public static void categoryReport(String[] info){
+        //0: managerID, 1: managerPass, 2: categoryID, 3: libraryID
+
+        if (Resource.checkNotManager(info[0], info[1]) ||
+            Resource.notValidIDs(info[3], info[2]) ||
+            Resource.notManagerLibrary(info[0], info[3])){return;}
+
+        int bookCount = 0;
+        int thesisCount = 0;
+        int ganjinehCount = 0;
+        int sellingBookCount = 0;
+
+        Library library = Management.getLibraries().get(info[3]);
+
+        for (String resourceID : library.getResources().keySet()){
+            Resource resource = library.getResources().get(resourceID);
+
+            Category category = Management.getCategories().get(resource.getCategoryID());
+
+            if (Category.lookUpCategories(category, info[2])){
+                if (resource instanceof Thesis){
+                    thesisCount++;
+                } else if (resource instanceof Ganjineh){
+                    ganjinehCount += ((Ganjineh) resource).getCurrentCopyCount();
+                } else if (resource instanceof SellingBook){
+                    sellingBookCount += ((SellingBook) resource).getCurrentCopyCount();
+                } else {
+                    bookCount += ((Book) resource).getCurrentCopyCount();
+                }
+            }
+        }
+
+        System.out.printf("%d %d %d %d\n", bookCount, thesisCount, ganjinehCount, sellingBookCount);
+    }
+
+
 }

@@ -11,6 +11,13 @@ public class Book extends Resource {
         currentCopyCount = copyCount;
     }
 
+    @Override
+    public String[] namesToSearchIN() {
+        String[] names = super.namesToSearchIN();
+        names[2] = this.publisher;
+        return names;
+    }
+
     public String getPublisher() {
         return publisher;
     }
