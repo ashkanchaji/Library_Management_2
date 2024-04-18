@@ -22,7 +22,7 @@ public class Management {
             if (input.equals("finish")) {
                 break;
             } else if (input.equals("report-penalties-sum")) {
-                //reportPenaltiesSum();
+                Act.reportPenaltiesSum();
                 continue;
             }
 
@@ -101,6 +101,7 @@ public class Management {
                 Act.libraryReport(info);
                 break;
             case "report-passed-deadline":
+                Act.reportPassedDeadLine(info);
                 break;
             default:
                 break;

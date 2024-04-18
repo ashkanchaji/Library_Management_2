@@ -192,10 +192,12 @@ public class Act {
         if (borrow.cannotAdd(info)){return;}
 
         User user = Management.getUsers().get(info[0]);
+        Library library = Management.getLibraries().get(info[2]);
 
         user.getBorrowedResources().add(borrow);
+        library.getBorrows().add(borrow);
 
-        Resource resource = Management.getLibraries().get(info[2]).getResources().get(info[3]);
+        Resource resource = library.getResources().get(info[3]);
         if (resource instanceof Thesis){
             ((Thesis) resource).setBorrowed(true);
         } else {
@@ -305,7 +307,7 @@ public class Act {
             });
         });
 
-        printIDs(foundSources);
+        printIDs(foundSources, true);
     }
 
     public static void searchUser(String[] info){
@@ -331,12 +333,16 @@ public class Act {
             }
         });
 
-        printIDs(foundIDs);
+        printIDs(foundIDs, true);
     }
 
-    private static void printIDs(ArrayList<String> IDs){
+    private static void printIDs(ArrayList<String> IDs, boolean notFound){
         if (IDs.isEmpty()){
-            System.out.println("not-found");
+            if (notFound){
+                System.out.println("not-found");
+            } else {
+                System.out.println("none");
+            }
             return;
         }
 
@@ -431,4 +437,37 @@ public class Act {
                             borrowedThesisCount, ganjinehCount, remainedSellingBooksCount);
     }
 
+    public static void reportPassedDeadLine(String[] info){
+        //0: managerID, 1: managerPass, 2: libraryID, 3: date, 4: time
+
+        if (Resource.checkNotManager(info[0], info[1]) ||
+                Resource.notValidIDs(info[2], "null") ||
+                Resource.notManagerLibrary(info[0], info[2])){return;}
+
+        Library library = Management.getLibraries().get(info[3]);
+
+        ArrayList<String> passedDeadlineSources = new ArrayList<>();
+
+        for (Borrow borrow : library.getBorrows()){
+            if (!passedDeadlineSources.contains(borrow.getResourceID()) &&
+                borrow.getLibraryID().equals(info[2]) &&
+               (Borrow.borrowDuration(borrow.getDate(), borrow.getTime(), info[3], info[4]) > borrow.getMaxBorrowTime())){
+                passedDeadlineSources.add(borrow.getResourceID());
+            }
+        }
+
+        printIDs(passedDeadlineSources, false);
+    }
+
+    public static void reportPenaltiesSum(){
+        // nothing
+
+        long[] totalPenalties = {0};
+
+        Management.getUsers().forEach((ID, user) -> {
+            totalPenalties[0] += user.getPenaltySum();
+        });
+
+        System.out.println(totalPenalties[0]);
+    }
 }

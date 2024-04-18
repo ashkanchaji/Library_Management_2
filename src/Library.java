@@ -1,4 +1,5 @@
 import java.util.HashMap;
+import java.util.HashSet;
 
 public class Library {
     private final String id;
@@ -7,6 +8,7 @@ public class Library {
     private final int tableCount;
     private final String address;
     private HashMap<String, Resource> resources;
+    private HashSet<Borrow> borrows;
 
     /**
      * A constructor that initializes all the fields
@@ -26,6 +28,7 @@ public class Library {
         this.tableCount = Integer.parseInt(tableCount);
         this.address = address;
         resources = new HashMap<>();
+        borrows = new HashSet<>();
     }
 
     /**
@@ -83,5 +86,13 @@ public class Library {
 
     public void setResources(HashMap<String, Resource> resources) {
         this.resources = resources;
+    }
+
+    public HashSet<Borrow> getBorrows() {
+        return borrows;
+    }
+
+    public void setBorrows(HashSet<Borrow> borrows) {
+        this.borrows = borrows;
     }
 }

@@ -94,10 +94,18 @@ public class Borrow extends ResourceAction implements Duplicate{
     public static void removeBorrow (String resourceID, String libraryID, String userID){
         Iterator<Borrow> iterator = Management.getUsers().get(userID).getBorrowedResources().iterator();
 
+        searchAndRemove(iterator, resourceID, libraryID);
+
+        iterator = Management.getLibraries().get(libraryID).getBorrows().iterator();
+
+        searchAndRemove(iterator, resourceID, libraryID);
+    }
+
+    private static void searchAndRemove(Iterator<Borrow> iterator, String resourceID, String libraryID){
         while (iterator.hasNext()){
             Borrow borrow = iterator.next();
             if (borrow.getResourceID().equals(resourceID) &&
-                borrow.getLibraryID().equals(libraryID)){
+                    borrow.getLibraryID().equals(libraryID)){
                 iterator.remove();
                 return;
             }
