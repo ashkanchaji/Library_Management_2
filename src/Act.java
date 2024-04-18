@@ -388,5 +388,47 @@ public class Act {
         System.out.printf("%d %d %d %d\n", bookCount, thesisCount, ganjinehCount, sellingBookCount);
     }
 
+    public static void libraryReport(String[] info){
+        //0: managerID, 1: managerPass, 2: libraryID
+
+        if (Resource.checkNotManager(info[0], info[1]) ||
+                Resource.notValidIDs(info[2], "null") ||
+                Resource.notManagerLibrary(info[0], info[2])){return;}
+
+        int booksCount = 0;
+        int thesisCount = 0;
+        int borrowedBooksCount = 0;
+        int borrowedThesisCount = 0;
+        int ganjinehCount = 0;
+        int remainedSellingBooksCount = 0;
+
+        Library library = Management.getLibraries().get(info[3]);
+
+        for (String resourceID : library.getResources().keySet()){
+            Resource resource = library.getResources().get(resourceID);
+
+            if (resource instanceof Thesis){
+                thesisCount++;
+                if (((Thesis) resource).isBorrowed()){
+                    borrowedThesisCount++;
+                }
+            } else if (resource instanceof Ganjineh){
+                ganjinehCount++;
+            } else if (resource instanceof SellingBook){
+                remainedSellingBooksCount += ((SellingBook) resource).getCurrentCopyCount();
+            } else {
+                Book book = (Book) resource;
+
+                booksCount += book.getCopyCount();
+
+                if (book.getCopyCount() != book.getCurrentCopyCount()){
+                    borrowedBooksCount += book.getCopyCount() - book.getCurrentCopyCount();
+                }
+            }
+        }
+
+        System.out.printf("%d %d %d %d %d %d\n", booksCount, thesisCount, borrowedBooksCount,
+                            borrowedThesisCount, ganjinehCount, remainedSellingBooksCount);
+    }
 
 }

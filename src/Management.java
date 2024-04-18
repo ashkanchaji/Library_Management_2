@@ -98,10 +98,11 @@ public class Management {
                 Act.categoryReport(info);
                 break;
             case "library-report":
+                Act.libraryReport(info);
                 break;
             case "report-passed-deadline":
                 break;
-            case "report-penalties-sum":
+            default:
                 break;
         }
     }
