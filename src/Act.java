@@ -380,7 +380,9 @@ public class Act {
 
             if (Category.lookUpCategories(category, info[2])){
                 if (resource instanceof Thesis){
-                    thesisCount++;
+                    if (!((Thesis) resource).isBorrowed()){
+                        thesisCount++;
+                    }
                 } else if (resource instanceof Ganjineh){
                     ganjinehCount += ((Ganjineh) resource).getCurrentCopyCount();
                 } else if (resource instanceof SellingBook){
@@ -408,14 +410,15 @@ public class Act {
         int ganjinehCount = 0;
         int remainedSellingBooksCount = 0;
 
-        Library library = Management.getLibraries().get(info[3]);
+        Library library = Management.getLibraries().get(info[2]);
 
         for (String resourceID : library.getResources().keySet()){
             Resource resource = library.getResources().get(resourceID);
 
             if (resource instanceof Thesis){
-                thesisCount++;
-                if (((Thesis) resource).isBorrowed()){
+                if (!((Thesis) resource).isBorrowed()){
+                    thesisCount++;
+                } else {
                     borrowedThesisCount++;
                 }
             } else if (resource instanceof Ganjineh){
@@ -425,7 +428,7 @@ public class Act {
             } else {
                 Book book = (Book) resource;
 
-                booksCount += book.getCopyCount();
+                booksCount += book.getCurrentCopyCount();
 
                 if (book.getCopyCount() != book.getCurrentCopyCount()){
                     borrowedBooksCount += book.getCopyCount() - book.getCurrentCopyCount();
@@ -444,7 +447,7 @@ public class Act {
                 Resource.notValidIDs(info[2], "null") ||
                 Resource.notManagerLibrary(info[0], info[2])){return;}
 
-        Library library = Management.getLibraries().get(info[3]);
+        Library library = Management.getLibraries().get(info[2]);
 
         ArrayList<String> passedDeadlineSources = new ArrayList<>();
 

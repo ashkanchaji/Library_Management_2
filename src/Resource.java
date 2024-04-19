@@ -8,6 +8,10 @@ public class Resource implements Duplicate, Restrictions{
     private final String categoryID;
     private final String libraryID;
     private final ArrayList<Comment> comments;
+    // added these for report most popular
+    private int totalBorrowDuration;
+    private int totalBorrowCount;
+    private int totalBorrowDays;
 
     public Resource(String id, String name, String author, String printYear,
                     String categoryID, String libraryID) {
@@ -18,6 +22,9 @@ public class Resource implements Duplicate, Restrictions{
         this.categoryID = categoryID;
         this.libraryID = libraryID;
         comments = new ArrayList<>();
+        totalBorrowDuration = 0;
+        totalBorrowCount = 0;
+        totalBorrowDays = 0;
     }
 
     /**
@@ -196,5 +203,29 @@ public class Resource implements Duplicate, Restrictions{
 
     public ArrayList<Comment> getComments() {
         return comments;
+    }
+
+    public int getTotalBorrowDuration() {
+        return totalBorrowDuration;
+    }
+
+    public void setTotalBorrowDuration(int totalBorrowDuration) {
+        this.totalBorrowDuration = totalBorrowDuration;
+    }
+
+    public int getTotalBorrowCount() {
+        return totalBorrowCount;
+    }
+
+    public void setTotalBorrowCount(int totalBorrowCount) {
+        this.totalBorrowCount = totalBorrowCount;
+    }
+
+    public int getTotalBorrowDays() {
+        return totalBorrowDays;
+    }
+
+    public void setTotalBorrowDays(int totalBorrowDays) {
+        this.totalBorrowDays = totalBorrowDays;
     }
 }

@@ -54,7 +54,7 @@ public class Category {
 
         Category category = subCategory;
 
-        while (!category.getId().equals("null")){
+        while (category.getSuperCategory() != null && !category.getSuperCategory().getId().equals("null")) {
             category = category.getSuperCategory();
             if (category.getId().equals(categoryID)){return true;}
         }
