@@ -103,7 +103,7 @@ public class User implements Duplicate, Restrictions {
     }
 
     public boolean notStaff(User user, String userPass){
-        if (!(user instanceof Staff) && !(user instanceof Professor)){
+        if (user instanceof Student){
             System.out.println("permission-denied");
             return true;
         }

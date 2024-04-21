@@ -11,8 +11,25 @@ public class Comment implements Restrictions{
     public boolean cannotAdd(String[] info) {
         // 0: userID, 1: userPass, 2: libraryId, 3: resourceID
 
-        return ResourceAction.notValidInfo(info[0], info[1], info[2], info[3]) ||
-                notCommenter(info[0]);
+        if (!Management.getUsers().containsKey(info[0]) ||
+            !Management.getLibraries().containsKey(info[2]) ||
+            !Management.getLibraries().get(info[2]).getResources().containsKey(info[3])){
+            System.out.println("not-found");
+            return true;
+        }
+
+        User user = Management.getUsers().get(info[0]);
+        if (!(user instanceof Student) && !(user instanceof Professor)){
+            System.out.println("permission-denied");
+            return true;
+        }
+
+        if (!Management.getUsers().get(info[0]).getPassword().equals(info[1])){
+            System.out.println("invalid-pass");
+            return true;
+        }
+
+        return false;
     }
 
     private boolean notCommenter(String userID){

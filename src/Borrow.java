@@ -65,7 +65,7 @@ public class Borrow extends ResourceAction implements Duplicate{
                     resource instanceof SellingBook){
                 System.out.println("not-allowed");
                 return true;
-            } else if (((Book) resource).getCurrentCopyCount() == 0){
+            } else if (((Book) resource).getCurrentCopyCount() <= 0){
                 System.out.println("not-allowed");
                 return true;
             }

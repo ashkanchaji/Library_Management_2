@@ -10,8 +10,8 @@ public abstract class ResourceAction implements Limitations{
     }
 
     public static boolean notValidInfo(String userID, String userPass, String libraryID, String resourceID){
-        return (userWrongInfo(userID, userPass) ||
-                resourceWrongInfo(libraryID, resourceID));
+        return (resourceWrongInfo(libraryID, resourceID)) ||
+                userWrongInfo(userID, userPass);
     }
 
     protected static boolean userWrongInfo (String userID, String userPass){

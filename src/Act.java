@@ -462,8 +462,10 @@ public class Act {
         printIDs(passedDeadlineSources, false);
     }
 
-    public static void reportPenaltiesSum(){
-        // nothing
+    public static void reportPenaltiesSum(String[] info){
+        // 0: managerID, 1: managerPass
+
+        if (Management.checkNotAdmin(info[0], info[1])){return;}
 
         long[] totalPenalties = {0};
 

@@ -55,13 +55,14 @@ public class Resource implements Duplicate, Restrictions{
     public static void removeResource (String[] info){
         // 0: managerID, 1: password, 2: resourceID, 3: libraryID
 
-        if (checkNotManager(info[0], info[1])){return;}
-
         if (!Management.getLibraries().containsKey(info[3]) ||
                 !Management.getLibraries().get(info[3]).getResources().containsKey(info[2])){
             System.out.println("not-found");
             return;
         }
+
+        if (checkNotManager(info[0], info[1])){return;}
+
 
         if (notManagerLibrary(info[0], info[3])){return;}
 
@@ -167,10 +168,10 @@ public class Resource implements Duplicate, Restrictions{
 
     public boolean cannotAdd(String[] info){
         //0: managerID, 1: passWord, 2: resourceID, 3: libraryId, 4: categoryID
-        return checkNotManager(info[0], info[1]) ||
-                notValidIDs(info[3], info[4]) ||
-                isDuplicate(info[2], info[3]) ||
-                notManagerLibrary(info[0], info[3]);
+        return notValidIDs(info[3], info[4]) ||
+                checkNotManager(info[0], info[1]) ||
+                notManagerLibrary(info[0], info[3]) ||
+                isDuplicate(info[2], info[3]) ;
     }
 
     public String[] namesToSearchIN(){

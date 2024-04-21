@@ -21,9 +21,6 @@ public class Management {
             // first check the no info commands
             if (input.equals("finish")) {
                 break;
-            } else if (input.equals("report-penalties-sum")) {
-                Act.reportPenaltiesSum();
-                continue;
             }
 
             processInput(input);
@@ -103,6 +100,8 @@ public class Management {
             case "report-passed-deadline":
                 Act.reportPassedDeadLine(info);
                 break;
+            case "report-penalties-sum" :
+                Act.reportPenaltiesSum(info);
             default:
                 break;
         }
