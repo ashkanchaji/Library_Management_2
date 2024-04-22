@@ -1,11 +1,14 @@
 import java.util.HashSet;
 
 public class Buy extends ResourceAction{
-    private static HashSet<Buy> soldBooks;
+    private static HashSet<Buy> soldBooks = new HashSet<>();
+    private long price;
+    private long discount;
 
     public Buy(String libraryID, String resourceID, String actorID) {
         super(libraryID, resourceID, actorID);
-        soldBooks = new HashSet<>();
+        this.price = 0;
+        this.discount = 0;
     }
 
     @Override
@@ -41,5 +44,21 @@ public class Buy extends ResourceAction{
 
     public static void setSoldBooks(HashSet<Buy> soldBooks) {
         Buy.soldBooks = soldBooks;
+    }
+
+    public long getPrice() {
+        return price;
+    }
+
+    public void setPrice(long price) {
+        this.price = price;
+    }
+
+    public long getDiscount() {
+        return discount;
+    }
+
+    public void setDiscount(long discount) {
+        this.discount = discount;
     }
 }

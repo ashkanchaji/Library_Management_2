@@ -284,6 +284,9 @@ public class Act {
         int newCount = ((SellingBook) resource).getCurrentCopyCount() - 1;
         ((SellingBook) resource).setCurrentCopyCount(newCount);
 
+        boughtResource.setPrice(((SellingBook) resource).getPrice());
+        boughtResource.setDiscount(((SellingBook) resource).getDiscount());
+
         Buy.getSoldBooks().add(boughtResource);
         System.out.println("success");
     }
@@ -604,5 +607,54 @@ public class Act {
             resourceInfo.put("borrowCount", resourceInfo.getOrDefault("borrowCount", 0L) + 1);
             borrowedResources.put(resourceID, resourceInfo);
         }
+    }
+
+    public static void reportSell(String[] info){
+        // 0: managerID, 1: managerPass, 2: library
+
+        if (!Management.getLibraries().containsKey(info[2]) ||
+                Resource.checkNotManager(info[0], info[1])){
+            return;
+        }
+
+        HashSet<Buy> soldBooks = Buy.getSoldBooks();
+
+        Map<String, Map<String, Long>> soldBooksInfo = new HashMap<>();
+
+        long totalAmountOfSale = 0;
+
+        for (Buy buy : soldBooks){
+            long actualPrice = (buy.getPrice() * (100 - buy.getDiscount())) / 100;
+
+            if (!soldBooksInfo.containsKey(buy.getResourceID())){
+                Map<String, Long> stats = new HashMap<>();
+                stats.put("count", 1L);
+                stats.put("totalSale", actualPrice);
+                soldBooksInfo.put(buy.getResourceID() ,stats);
+            } else {
+                Map<String, Long> resourceInfo = soldBooksInfo.get(buy.getResourceID());
+                resourceInfo.put("count",  resourceInfo.getOrDefault("count", 0L) + 1);
+                resourceInfo.put("totalSale", resourceInfo.getOrDefault("totalSale", 0L) + actualPrice);
+                soldBooksInfo.put(buy.getResourceID(), resourceInfo);
+            }
+
+            totalAmountOfSale += actualPrice;
+        }
+
+        System.out.printf("%d %d\n", soldBooks.size(), totalAmountOfSale);
+
+        long mostSold = 0;
+        String mostSoldID = " ";
+
+        for(String ID : soldBooksInfo.keySet()){
+            Map<String, Long> stats = soldBooksInfo.get(ID);
+
+            if (stats.get("count") > mostSold){
+                mostSold = stats.get("count");
+                mostSoldID = ID;
+            }
+        }
+
+        System.out.printf("%s %d %d\n", mostSoldID, mostSold, soldBooksInfo.get(mostSoldID).get("totalSale"));
     }
 }

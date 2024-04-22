@@ -102,8 +102,13 @@ public class Management {
                 break;
             case "report-penalties-sum" :
                 Act.reportPenaltiesSum(info);
+                break;
             case "report-most-popular" :
                 Act.reportMostPopular(info);
+                break;
+            case "report-sell" :
+                Act.reportSell(info);
+                break;
             default:
                 break;
         }
