@@ -6,12 +6,20 @@ import java.util.Iterator;
 public class Borrow extends ResourceAction implements Duplicate{
     private final String date;
     private final String time;
+    private String type;
+    private String returnedDate;
+    private String returnedTime;
+    private long inBorrowDays;
     private final int maxBorrowTime;
 
     public Borrow(String actorID, String libraryID, String resourceID, String date, String time) {
         super(libraryID, resourceID, actorID);
         this.date = date;
         this.time = time;
+        this.type = "";
+        this.returnedDate = "0001-01-01";
+        this.returnedTime = "00:00";
+        this.inBorrowDays = 0;
         this.maxBorrowTime = userMaxBorrowTime(actorID, libraryID, resourceID);
     }
 
@@ -58,7 +66,6 @@ public class Borrow extends ResourceAction implements Duplicate{
             return true;
         }
 
-        // may cause logical error
         Resource resource = Management.getLibraries().get(info[2]).getResources().get(info[3]);
         if (resource instanceof Book){
             if (resource instanceof Ganjineh ||
@@ -93,10 +100,6 @@ public class Borrow extends ResourceAction implements Duplicate{
 
     public static void removeBorrow (String resourceID, String libraryID, String userID){
         Iterator<Borrow> iterator = Management.getUsers().get(userID).getBorrowedResources().iterator();
-
-        searchAndRemove(iterator, resourceID, libraryID);
-
-        iterator = Management.getLibraries().get(libraryID).getBorrows().iterator();
 
         searchAndRemove(iterator, resourceID, libraryID);
     }
@@ -179,6 +182,16 @@ public class Borrow extends ResourceAction implements Duplicate{
         }
     }
 
+    public static boolean sameBorrow(String userID, String libraryID, String resourceID,
+             String borrowDate, String borrowTime, Borrow borrow){
+
+       return (borrow.getLibraryID().equals(libraryID) &&
+               borrow.getResourceID().equals(resourceID) &&
+               borrow.getActorID().equals(userID) &&
+               borrow.getDate().equals(borrowDate) &&
+               borrow.getTime().equals(borrowTime));
+    }
+
     public int getMaxBorrowTime() {
         return maxBorrowTime;
     }
@@ -189,6 +202,37 @@ public class Borrow extends ResourceAction implements Duplicate{
 
     public String getTime() {
         return time;
+    }
 
+    public String getReturnedDate() {
+        return returnedDate;
+    }
+
+    public void setReturnedDate(String returnedDate) {
+        this.returnedDate = returnedDate;
+    }
+
+    public String getReturnedTime() {
+        return returnedTime;
+    }
+
+    public void setReturnedTime(String returnedTime) {
+        this.returnedTime = returnedTime;
+    }
+
+    public long getInBorrowDays() {
+        return inBorrowDays;
+    }
+
+    public void setInBorrowDays(long inBorrowDays) {
+        this.inBorrowDays = inBorrowDays;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 }

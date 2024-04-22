@@ -1,6 +1,5 @@
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
+import java.util.*;
+
 
 public class Act {
     /**
@@ -195,19 +194,23 @@ public class Act {
         Library library = Management.getLibraries().get(info[2]);
 
         user.getBorrowedResources().add(borrow);
-        library.getBorrows().add(borrow);
 
         Resource resource = library.getResources().get(info[3]);
         if (resource instanceof Thesis){
             ((Thesis) resource).setBorrowed(true);
+            borrow.setType("Thesis");
         } else {
             int newCount = ((Book) resource).getCurrentCopyCount() - 1;
             ((Book) resource).setCurrentCopyCount(newCount);
+            borrow.setType("Book");
         }
+
+        library.getBorrows().add(borrow);
+
         System.out.println("success");
     }
 
-    // not returning the latest resource?
+
     public static void returnResource(String[] info){
         // 0: userID, 1: userPass, 2: libraryID, 3: resourceID, 4: date, 5: time
 
@@ -222,6 +225,8 @@ public class Act {
 
         long borrowDuration = Borrow.borrowDuration(borrow.getDate(), borrow.getTime(), info[4], info[5]);
         long penalty = Borrow.calculatePenalty(Management.getUsers().get(info[0]), borrow, borrowDuration);
+
+        addBorrowInfoToLibrary(info, borrow.getDate(), borrow.getTime(), borrowDuration);
 
         Borrow.removeBorrow(info[3], info[2], info[0]);
 
@@ -244,6 +249,27 @@ public class Act {
         }
 
         System.out.println("success");
+    }
+
+    private static void addBorrowInfoToLibrary (String[] info, String borrowDate, String borrowTime,
+                                                long borrowDuration){
+        // 0: userID, 1: userPass, 2: libraryID, 3: resourceID,
+        // 4: returnDate, 5: returnTime
+
+        for (Borrow borrow1 : Management.getLibraries().get(info[2]).getBorrows()){
+            if (Borrow.sameBorrow(info[0], info[2], info[3], borrowDate, borrowTime, borrow1)){
+                borrow1.setReturnedDate(info[4]);
+                borrow1.setReturnedTime(info[5]);
+
+                long borrowInDays = borrowDuration / 24;
+                if (borrowDuration % 24 != 0){
+                    borrowInDays++;
+                }
+                long newInBorrowDays = borrow1.getInBorrowDays() + borrowInDays;
+                borrow1.setInBorrowDays(newInBorrowDays);
+                return;
+            }
+        }
     }
 
     public static void buy (String[] info){
@@ -325,12 +351,6 @@ public class Act {
                         foundSources.add(resource.getId());
                     }
                 }
-
-                /*for (String name : resource.namesToSearchIN()){
-                    if (name.toLowerCase().contains(keyWord)){
-                        foundSources.add(resource.getId());
-                    }
-                }*/
             });
         });
 
@@ -511,8 +531,78 @@ public class Act {
             return;
         }
 
-        Library library = Management.getLibraries().get(info[2]);
+        HashSet<Borrow> borrows = Management.getLibraries().get(info[2]).getBorrows();
 
+        Map<String, Map<String, Long>> borrowedBooks = new HashMap<>();
+        Map<String, Map<String, Long>> borrowedThesis = new HashMap<>();
 
+        for (Borrow borrow : borrows) {
+            if (borrow.getInBorrowDays() != 0){
+                if (borrow.getType().equals("Book")) {
+                    updateBorrowStats(borrowedBooks, borrow.getResourceID(), borrow.getInBorrowDays());
+                } else {
+                    updateBorrowStats(borrowedThesis, borrow.getResourceID(), borrow.getInBorrowDays());
+                }
+            }
+        }
+
+        Long maxBookBorrowDay = findMaxBorrowDays(borrowedBooks);
+        Long maxThesisBorrowDay = findMaxBorrowDays(borrowedThesis);
+
+        ArrayList<String> mostPopularBook = findMostPopularItems(borrowedBooks, maxBookBorrowDay);
+        ArrayList<String> mostPopularThesis = findMostPopularItems(borrowedThesis, maxThesisBorrowDay);
+
+        printOutPuts(mostPopularBook, borrowedBooks);
+        printOutPuts(mostPopularThesis, borrowedThesis);
+    }
+
+    private static void printOutPuts(ArrayList<String> mostPopularBorrow,
+                                     Map<String, Map<String, Long>> borrowedResources){
+        if (mostPopularBorrow.size() != 1){
+            System.out.println("null");
+            return;
+        }
+
+        String ID = mostPopularBorrow.getFirst();
+
+        System.out.printf("%s %d %d\n", ID, borrowedResources.get(ID).get("borrowCount"),
+                                            borrowedResources.get(ID).get("borrowDays"));
+    }
+
+    private static ArrayList<String> findMostPopularItems(Map<String, Map<String, Long>> borrowedResources, Long maxBorrowDay) {
+        ArrayList<String> mostPopularItems = new ArrayList<>();
+        for (Map.Entry<String, Map<String, Long>> entry : borrowedResources.entrySet()) {
+            String resourceID = entry.getKey();
+            Map<String, Long> resourceInfo = entry.getValue();
+            if (resourceInfo.get("borrowDays").longValue() == maxBorrowDay) {
+                mostPopularItems.add(resourceID);
+            }
+        }
+        return mostPopularItems;
+    }
+
+    private static Long findMaxBorrowDays(Map<String, Map<String, Long>> borrowedResources) {
+        Long maxBorrowDay = 0L;
+        for (Map<String, Long> resourceInfo : borrowedResources.values()) {
+            Long borrowDays = resourceInfo.get("borrowDays");
+            if (borrowDays > maxBorrowDay) {
+                maxBorrowDay = borrowDays;
+            }
+        }
+        return maxBorrowDay;
+    }
+
+    private static void updateBorrowStats(Map<String, Map<String, Long>> borrowedResources, String resourceID, Long inBorrowDays) {
+        if (!borrowedResources.containsKey(resourceID)) {
+            Map<String, Long> stats = new HashMap<>();
+            stats.put("borrowDays", inBorrowDays);
+            stats.put("borrowCount", 1L);
+            borrowedResources.put(resourceID, stats);
+        } else {
+            Map<String, Long> resourceInfo = borrowedResources.get(resourceID);
+            resourceInfo.put("borrowDays", resourceInfo.getOrDefault("borrowDays", 0L) + inBorrowDays);
+            resourceInfo.put("borrowCount", resourceInfo.getOrDefault("borrowCount", 0L) + 1);
+            borrowedResources.put(resourceID, resourceInfo);
+        }
     }
 }

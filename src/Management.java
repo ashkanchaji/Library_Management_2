@@ -1,6 +1,6 @@
 import java.util.*;
 
-public class Main {
+public class Management {
     private static final String adminName = "admin";
     private static final String adminPass = "AdminPass";
 
@@ -102,6 +102,8 @@ public class Main {
                 break;
             case "report-penalties-sum" :
                 Act.reportPenaltiesSum(info);
+            case "report-most-popular" :
+                Act.reportMostPopular(info);
             default:
                 break;
         }
