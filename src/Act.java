@@ -299,11 +299,38 @@ public class Act {
             HashMap<String, Resource> resources = library.getResources();
 
             resources.forEach((resourceID, resource) -> {
-                for (String name : resource.namesToSearchIN()){
-                    if (name.toLowerCase().contains(keyWord)){
+                if (resource instanceof Thesis){
+                    if (((Thesis) resource).getName().contains(keyWord) ||
+                            ((Thesis) resource).getAuthor().contains(keyWord) ||
+                            ((Thesis) resource).getProfessor().contains(keyWord)){
+                        foundSources.add(resource.getId());
+                    }
+                } else if (resource instanceof Ganjineh){
+                    if (((Ganjineh) resource).getName().contains(keyWord) ||
+                            ((Ganjineh) resource).getAuthor().contains(keyWord) ||
+                            ((Ganjineh) resource).getPublisher().contains(keyWord) ||
+                            ((Ganjineh) resource).getDonor().contains(keyWord)){
+                        foundSources.add(resource.getId());
+                    }
+                } else if (resource instanceof SellingBook){
+                    if (((SellingBook) resource).getName().contains(keyWord) ||
+                            ((SellingBook) resource).getAuthor().contains(keyWord) ||
+                            ((SellingBook) resource).getPublisher().contains(keyWord)){
+                        foundSources.add(resource.getId());
+                    }
+                } else {
+                    if (((Book) resource).getName().contains(keyWord) ||
+                            ((Book) resource).getAuthor().contains(keyWord) ||
+                            ((Book) resource).getPublisher().contains(keyWord)){
                         foundSources.add(resource.getId());
                     }
                 }
+
+                /*for (String name : resource.namesToSearchIN()){
+                    if (name.toLowerCase().contains(keyWord)){
+                        foundSources.add(resource.getId());
+                    }
+                }*/
             });
         });
 
@@ -474,5 +501,18 @@ public class Act {
         });
 
         System.out.println(totalPenalties[0]);
+    }
+
+    public static void reportMostPopular(String[] info){
+        // 0: managerID, 1: managerPass, 2: library
+
+        if (!Management.getLibraries().containsKey(info[2]) ||
+                Resource.checkNotManager(info[0], info[1])){
+            return;
+        }
+
+        Library library = Management.getLibraries().get(info[2]);
+
+
     }
 }

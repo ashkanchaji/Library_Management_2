@@ -8,16 +8,9 @@ public class Ganjineh extends Book{
                     String printYear, String donor, String categoryID,
                     String libraryID) {
         super(id, name, author, publisher, printYear, 1, categoryID, libraryID);
-        this.donor = donor;
+        this.donor = donor.toLowerCase();
         borrowedToReadDate = "0001-01-01";
         borrowedToReadTime = "00:00";
-    }
-
-    @Override
-    public String[] namesToSearchIN() {
-        String[] names = super.namesToSearchIN();
-        names[2] = this.donor;
-        return new String[]{names[0], names[1], names[2], this.getPublisher()};
     }
 
     public String getDonor() {

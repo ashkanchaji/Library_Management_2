@@ -1,6 +1,6 @@
 import java.util.*;
 
-public class Management {
+public class Main {
     private static final String adminName = "admin";
     private static final String adminPass = "AdminPass";
 

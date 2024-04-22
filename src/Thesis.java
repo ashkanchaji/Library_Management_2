@@ -5,15 +5,8 @@ public class Thesis extends Resource{
     public Thesis(String id, String name, String author, String professor, String printYear,
                   String categoryID, String libraryID) {
         super(id, name, author, printYear, categoryID, libraryID);
-        this.professor = professor;
+        this.professor = professor.toLowerCase();
         isBorrowed = false;
-    }
-
-    @Override
-    public String[] namesToSearchIN(){
-        String[] names = super.namesToSearchIN();
-        names[2] = this.professor;
-        return names;
     }
 
     public String getProfessor() {

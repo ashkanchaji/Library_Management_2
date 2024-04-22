@@ -16,8 +16,8 @@ public class Resource implements Duplicate, Restrictions{
     public Resource(String id, String name, String author, String printYear,
                     String categoryID, String libraryID) {
         this.id = id;
-        this.name = name;
-        this.author = author;
+        this.name = name.toLowerCase();
+        this.author = author.toLowerCase();
         this.printYear = printYear;
         this.categoryID = categoryID;
         this.libraryID = libraryID;
@@ -172,10 +172,6 @@ public class Resource implements Duplicate, Restrictions{
                 checkNotManager(info[0], info[1]) ||
                 notManagerLibrary(info[0], info[3]) ||
                 isDuplicate(info[2], info[3]) ;
-    }
-
-    public String[] namesToSearchIN(){
-        return new String[]{this.name, this.author, ""};
     }
 
     public String getId() {
